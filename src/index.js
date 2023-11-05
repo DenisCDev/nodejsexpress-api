@@ -1,9 +1,9 @@
 const express = require("express");
-const moongose = require("mongoose");
+const mongoose = require("mongoose");
 
 const app = express()
 const port = 2000
-mongoose.connect('mongodb+srv://denisscarabelli:<password>@api-rpg.sc7thba.mongodb.net/?retryWrites=true&w=majority');
+mongoose.connect('mongodb+srv://denisscarabelli:px0XOZUqEoTfPQGQ@api-rpg.sc7thba.mongodb.net/?retryWrites=true&w=majority');
 
 const Personagem = mongoose.model('Personagem', {
     nome: String,
@@ -20,8 +20,8 @@ app.get("/", (req, res) => {
     res.send('Começando novo projeto node com express')
 })
 
-app.post("/", (req, res) => {
-    const film = new Film({
+app.post("/", async (req, res) => {
+    const personagem = new Personagem({
         nome: req.body.nome,
         idade: req.body.idade,
         classe: req.body.classe,
@@ -31,6 +31,9 @@ app.post("/", (req, res) => {
         alinhamento: req.body.alinhamento,
         imagemPersonagem: req.body.imagemPersonagem,
     })
+
+    await personagem.save()
+    res.send(personagem)
 })
 
 app.listen(port, () => {

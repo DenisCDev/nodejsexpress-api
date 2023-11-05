@@ -60,6 +60,6 @@ app.post("/", async (req, res) => {
 })
 
 app.listen(port, () => {
-    mongoose.connect('mongodb+srv://denisscarabelli:R06VlSvqNNCcVBcK@api-rpg.sc7thba.mongodb.net/?retryWrites=true&w=majority');
+    mongoose.connect('mongodb+srv://denisscarabelli:64b2afLXvlmUav5n@api-rpg.sc7thba.mongodb.net/?retryWrites=true&w=majority');
     console.log(`Estou escutando a porta: ${port}`)
 })

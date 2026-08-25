@@ -2,7 +2,7 @@
 
 <p align="center">
   <b>Production-grade REST API for D&D-style RPG characters: TypeScript, Express 5, Mongoose 8, JWT</b><br>
-  <sub><i>"you meet in a tavern..."</i></sub>
+  <sub><i>the party is already at the table</i></sub>
 </p>
 
 <p align="center">
@@ -13,12 +13,11 @@
 </p>
 
 <p align="center">
-  <img src="assets/mtg-tavern.jpg" width="480" alt="An adventuring party argues around a tavern table: a dragonborn, an elf and companions over candles and mugs. Art by Zoltan Boros for Magic: The Gathering">
+  <img src="assets/mtg-banquet-guests.jpg" width="640" alt="Hobbits raising tankards at a banquet, bread and bunting — art by Viko Menezes, Tales of Middle-earth Commander (2023)">
 </p>
 
-> *"You Meet in a Tavern"*, art by Zoltan Boros for **Magic: The Gathering**,
-> Commander Legends: Battle for Baldur's Gate (2022).
-> Every campaign starts with a party roster. This API is where it lives.
+> *"Banquet Guests"*, printed in Brazil as **"Convidados do Banquete"**. Art by Viko Menezes for **Magic: The Gathering**,
+> Tales of Middle-earth Commander (2023). Every campaign starts with a party roster. This API is where it lives.
 
 > **[Leia em Português](#portugues)**
 

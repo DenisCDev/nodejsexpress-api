@@ -1,8 +1,7 @@
 <h1 align="center">RPG Character API</h1>
 
 <p align="center">
-  <b>Production-grade REST API for D&D-style RPG characters: TypeScript, Express 5, Mongoose 8, JWT</b><br>
-  <sub><i>the party is already at the table</i></sub>
+  <b>An RPG character API with authentication, validation, tests and Docker</b>
 </p>
 
 <p align="center">
@@ -16,25 +15,26 @@
   <img src="assets/mtg-banquet-guests.jpg" width="640" alt="Hobbits raising tankards at a banquet, bread and bunting — art by Viko Menezes, Tales of Middle-earth Commander (2023)">
 </p>
 
-> *"Banquet Guests"*, printed in Brazil as **"Convidados do Banquete"**. Art by Viko Menezes for **Magic: The Gathering**,
-> Tales of Middle-earth Commander (2023). Every campaign starts with a party roster. This API is where it lives.
+<p align="center">
+  <sub><i>"food and cheer and song"</i><br>
+  — <b>The Hobbit</b>, chapter XIX · art by Viko Menezes for Magic: The Gathering, Tales of Middle-earth Commander (2023)
+</p>
 
 > **[Leia em Português](#portugues)**
 
-**This API started as a single 65-line file with hardcoded credentials and no
-validation.** I built it in 2025 while learning Node + MongoDB. In 2026 I rebuilt
-it from scratch with the stack I now use in production: TypeScript strict mode,
-Express 5, Mongoose 8, Zod-validated boundaries, JWT auth, structured logging,
-integration tests against an in-memory Mongo, multi-stage Docker, and CI. The
-current version is what I would actually ship.
+This REST API manages RPG characters for authenticated users. Every record is
+scoped to its owner, incoming data is validated before it reaches the business
+logic, and credentials are removed from structured logs. The repository also
+includes integration tests, a multi-stage Docker image and continuous
+integration checks.
 
 ---
 
 ## Highlights
 
-- **TypeScript strict** with `noUncheckedIndexedAccess` — no `any`, no surprises
+- **TypeScript strict** with `noUncheckedIndexedAccess` and no use of `any`
 - **Express 5** with native async error propagation (no wrapper)
-- **Zod-validated boundaries** for body, params, and query — invalid input never reaches the service layer
+- **Zod-validated boundaries** for request bodies, route parameters and query strings
 - **JWT auth** HS256 with explicit `iss`/`aud`, bcryptjs (12 rounds), per-route auth rate limit (10 req / 15 min)
 - **Owner-scoped data** — get/patch/delete of someone else's id returns 404 (tested)
 - **Structured logging** with Pino; `Authorization` and `Cookie` redacted
@@ -105,7 +105,9 @@ API listening on `http://localhost:3000`.
 ### Docker
 
 ```bash
-echo "JWT_SECRET=$(openssl rand -hex 32)" > .env
+cp -n .env.example .env
+# set JWT_SECRET in .env to a random value with at least 32 characters
+# keep the same file if you already configured the local setup
 docker compose up --build
 ```
 
@@ -220,24 +222,6 @@ Codes: `BAD_REQUEST`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`, `CONFLICT`, `RAT
 
 ---
 
-## What changed from v1
-
-| | v1 (2025) | v2 (2026) |
-|-|-----------|-----------|
-| Code | 65 lines, single file | Layered, ~700 lines, fully typed |
-| Language | JavaScript | TypeScript strict |
-| Validation | None | Zod at every boundary |
-| Auth | None | JWT + bcrypt + auth rate limit |
-| Multi-tenancy | None | Per-owner data isolation |
-| Errors | Default Express | Typed `AppError` + centralized handler |
-| Logging | `console.log` | Structured Pino + per-request |
-| Security | Hardcoded creds in source | Env-only, Helmet, rate limit, CORS, body limit |
-| Tests | None | Integration tests on real Mongo (auth, CRUD, owner isolation) |
-| Container | None | Multi-stage, non-root, healthcheck |
-| CI | None | GitHub Actions: typecheck + lint + build + test |
-
----
-
 ## License
 
 [MIT](LICENSE) © Denis Scarabelli
@@ -248,18 +232,17 @@ Codes: `BAD_REQUEST`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`, `CONFLICT`, `RAT
 
 # RPG Character API (PT-BR)
 
-**Esta API começou como um arquivo único de 65 linhas, com credencial hardcoded
-e zero validação.** Construí em 2025 enquanto aprendia Node + MongoDB. Em 2026
-reconstruí do zero com a stack que uso em produção hoje: TypeScript em modo
-strict, Express 5, Mongoose 8, fronteiras validadas com Zod, auth JWT, logging
-estruturado, testes de integração contra um Mongo em memória, Docker
-multi-stage e CI. A versão atual é o que eu de fato colocaria no ar.
+Esta API REST gerencia personagens de RPG para usuários autenticados. Cada
+registro pertence a um usuário, os dados de entrada são validados antes da
+regra de negócio e credenciais são removidas dos logs estruturados. O
+repositório também inclui testes de integração, imagem Docker em múltiplas
+etapas e verificações de integração contínua.
 
 ## Destaques
 
-- **TypeScript strict** com `noUncheckedIndexedAccess` — sem `any`, sem surpresa
+- **TypeScript strict** com `noUncheckedIndexedAccess` e sem uso de `any`
 - **Express 5** com propagação nativa de erro async (sem wrapper)
-- **Fronteiras validadas com Zod** para body, params e query — input inválido nunca chega à camada de serviço
+- **Fronteiras validadas com Zod** para corpo, parâmetros de rota e query strings
 - **Auth JWT** HS256 com `iss`/`aud` explícitos, bcryptjs (12 rounds), rate limit próprio nas rotas de auth (10 req / 15 min)
 - **Dados por dono** — get/patch/delete do id de outro usuário devolve 404 (testado)
 - **Logging estruturado** com Pino; `Authorization` e `Cookie` omitidos
@@ -293,7 +276,9 @@ API escutando em `http://localhost:3000`.
 ### Docker
 
 ```bash
-echo "JWT_SECRET=$(openssl rand -hex 32)" > .env
+cp -n .env.example .env
+# defina JWT_SECRET no .env com um valor aleatório de pelo menos 32 caracteres
+# mantenha o mesmo arquivo se você já configurou o ambiente local
 docker compose up --build
 ```
 
@@ -336,22 +321,6 @@ exemplos de `curl` estão na seção em inglês acima — são idênticos.
 - `CORS_ORIGIN=*` é recusado em produção. Coloque uma origem explícita (o compose usa `http://localhost:5173`).
 - O container roda como usuário `app` não-root. A porta do Mongo no host fica em `127.0.0.1`.
 - Shutdown gracioso em `SIGTERM` / `SIGINT` espera request em voo, desconecta o Mongoose e força a saída em 10s.
-
-## O que mudou da v1
-
-| | v1 (2025) | v2 (2026) |
-|-|-----------|-----------|
-| Código | 65 linhas, arquivo único | Em camadas, ~700 linhas, tipado |
-| Linguagem | JavaScript | TypeScript strict |
-| Validação | Nenhuma | Zod em toda fronteira |
-| Auth | Nenhuma | JWT + bcrypt + rate limit de auth |
-| Multi-tenancy | Nenhum | Isolamento de dados por dono |
-| Erros | Padrão do Express | `AppError` tipado + handler centralizado |
-| Logging | `console.log` | Pino estruturado + por request |
-| Segurança | Credencial hardcoded no fonte | Só env, Helmet, rate limit, CORS, limite de body |
-| Testes | Nenhum | Integração em Mongo real (auth, CRUD, isolamento por dono) |
-| Container | Nenhum | Multi-stage, não-root, healthcheck |
-| CI | Nenhuma | GitHub Actions: typecheck + lint + build + test |
 
 ## Licença
 

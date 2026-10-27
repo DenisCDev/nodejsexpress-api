@@ -1,5 +1,7 @@
 <h1 align="center">RPG Character API</h1>
 
+<p align="center"><b>English</b> · <a href="README.pt-BR.md">Português</a></p>
+
 <p align="center">
   <b>An RPG character API with authentication, validation, tests and Docker</b>
 </p>
